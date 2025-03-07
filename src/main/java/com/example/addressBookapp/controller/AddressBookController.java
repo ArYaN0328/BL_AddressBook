@@ -3,6 +3,7 @@ package com.example.addressBookapp.controller;
 import com.example.addressBookapp.dto.AddressBookDto;
 import com.example.addressBookapp.model.AddressBook;
 import com.example.addressBookapp.repository.AddressBookRepository;
+import com.example.addressBookapp.services.AddressBookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,50 +16,41 @@ public class AddressBookController {
 
     @Autowired
     AddressBookRepository addressBookrepository;
+    @Autowired
+    AddressBookService addressBookService;
 
     @GetMapping
     public List<AddressBook> getall()
     {
-        return addressBookrepository.findAll();
+   return addressBookService.getall();
     }
+
+
+
+
+
 
     @GetMapping("/{id}")
     public AddressBook getbyId(@PathVariable Long id)
     {
-        return addressBookrepository.findById(id).orElseThrow(()->new RuntimeException(("No one found")));
+       return addressBookService.getByid(id);
     }
 
     @PostMapping()
     public AddressBook postAddress(@RequestBody AddressBookDto address)
     {
-        AddressBook ad=new AddressBook();
-        ad.setCity(address.getCity());
-        ad.setName(address.getName());
-        ad.setState(address.getState());
-        ad.setPhoneNumber(address.getPhoneNumber());
-        return addressBookrepository.save(ad);
+     return addressBookService.postAddress(address);
     }
     @PutMapping("/{id}")
     public AddressBook putAddress(@PathVariable Long id,@RequestBody AddressBookDto address)
     {
-        Optional<AddressBook> existed=addressBookrepository.findById(id);
-        if(existed.isPresent())
-        {
-            AddressBook ad= existed.get();
-            ad.setCity(address.getCity());
-            ad.setName(address.getName());
-            ad.setState(address.getState());
-            ad.setPhoneNumber(address.getPhoneNumber());
-            return addressBookrepository.save(ad);
-        }
-        return null;
-
+     return addressBookService.putAddress(id,address);
 
     }
     @DeleteMapping("/{id}")
     public void deletebyid(@PathVariable Long id)
     {
-        addressBookrepository.deleteById(id);
+       addressBookService.DeleteByid(id);
     }
 
 }
